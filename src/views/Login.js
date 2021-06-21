@@ -16,12 +16,37 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React from "react";
+import axios from "axios";
+import React, { useState } from "react";
 // reactstrap components
-import { Card, CardHeader, CardBody, Row, Col, Button, CardTitle, Form, FormGroup, Label, Input } from "reactstrap";
+import { Card, CardHeader, CardBody, Row, Col, Button, CardTitle, Form, FormGroup, Label, Input, UncontrolledAlert } from "reactstrap";
 
 
 function Map() {
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [token, setToken] = useState(null)
+  const [loginFailStatatus, setLoginFailStatus] = useState(null)
+
+  async function auth(event) {
+    event.preventDefault()
+    await axios.post('https://movie-search-backend.herokuapp.com/login/auth', {
+      username,
+      password
+    }).then((response) => {
+      setToken(response.data.accessToken)
+      setLoginFailStatus(null)
+    }).catch(error => {
+      setLoginFailStatus(error.response.data.massage)
+      return false
+    })
+  }
+
+  const isLoginFail = () => {
+    if (loginFailStatatus) {
+      return <UncontrolledAlert color="danger" fade={true}>{loginFailStatatus}</UncontrolledAlert>
+    }
+  }
   return (
     <>
       <div className="content">
@@ -29,25 +54,22 @@ function Map() {
           <Col className="ml-auto mr-auto" md="5">
             <Card className="card-upgrade">
               <CardHeader className="text-center">
-              
-                <p className="card-category">
-
-                </p>
               </CardHeader>
               <CardBody>
-                <Form inline>
+                <Form inline onSubmit={auth}>
                   <FormGroup className="mb-2 mr-sm-2 mb-sm-0">
                     <Label for="exampleEmail" className="mr-sm-2">ID</Label>
-                    <Input type="text" name="username" id="exampleEmail" placeholder="username" />
+                    <Input type="text" name="username" id="exampleEmail" placeholder="username" onChange={event => setUsername(event.target.value)} />
                   </FormGroup>
                   <FormGroup className="mb-2 mr-sm-2 mb-sm-0">
                     <Label for="examplePassword" className="mr-sm-2">PASSWORD</Label>
-                    <Input type="password" name="password" id="examplePassword" placeholder="password" />
+                    <Input type="password" name="password" id="examplePassword" placeholder="password" onChange={event => setPassword(event.target.value)} />
                   </FormGroup>
-                  <Button>Submit</Button>
+                  <Button type='submit'>Submit</Button>
                 </Form>
               </CardBody>
             </Card>
+            {isLoginFail()}
           </Col>
         </Row>
       </div>

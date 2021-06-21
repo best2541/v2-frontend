@@ -25,6 +25,7 @@ import Login from "views/Login";
 import UserPage from "views/User.js";
 import UpgradeToPro from "views/Upgrade.js";
 import Add from "views/Add.js"
+import CategoryDetail from "views/CategoryDetail";
 
 
 var routes = [

@@ -17,6 +17,7 @@
 
 */
 import React, { useEffect, useState } from "react";
+import CategoryDetail from "views/CategoryDetail";
 import axios from 'axios'
 // reactstrap components
 import {
@@ -40,7 +41,7 @@ import {
 
 function Category() {
   const [movieCategories, setMovieCategories] = useState([])
-
+  const { id } = useParams()
   const getCategories = async () => {
     const { data } = await axios.get(`https://movie-search-backend.herokuapp.com/content/categories`)
     setMovieCategories(data)
@@ -48,18 +49,24 @@ function Category() {
   const renderMovieCategories = movieCategories.map(category => {
     return (
       <Col md="3">
-        <Link to={`/content/category/${category.id}?page=1`}>
           <Button
             block
             color="primary"
-          //onClick={() => notify("tl")}
+            onClick={(event)=>{
+              const url = `/admin/category/${category.id}?page=1`
+              window.location.href= url
+            }}
           >
             {category.name}
           </Button>
-        </Link>
       </Col>
     )
   })
+
+  const renderSomething = (props) => {
+    console.log(id)
+    return <p>{id}</p>
+  }
   useEffect(() => {
     getCategories()
     // showData()
@@ -69,21 +76,30 @@ function Category() {
     <>
       <div className='content'>
         <Row>
-          <Col md="12">
-            <Card>
-              <CardBody>
-                <div className="places-buttons">
-                  <Row>
-                    <Col className="ml-auto mr-auto" lg="8">
+          <Switch>
+            <Route path='/admin/category/:id'>
+              <CategoryDetail/>
+            </Route>
+            <Route path='/admin/category' exact>
+              <Col md="12">
+                <Card>
+                  <CardBody>
+                    <div className="places-buttons">
                       <Row>
-                        {renderMovieCategories}
+                        <Col className="ml-auto mr-auto" lg="8">
+                          <Row>
+                            <Router>
+                              {renderMovieCategories}
+                            </Router>
+                          </Row>
+                        </Col>
                       </Row>
-                    </Col>
-                  </Row>
-                </div>
-              </CardBody>
-            </Card>
-          </Col>
+                    </div>
+                  </CardBody>
+                </Card>
+              </Col>
+            </Route>
+          </Switch>
         </Row>
       </div>
     </>

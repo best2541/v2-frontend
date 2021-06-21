@@ -16,7 +16,7 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React from "react";
+import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   Collapse,
@@ -43,7 +43,13 @@ function Header(props) {
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
   const [color, setColor] = React.useState("transparent");
   const sidebarToggle = React.useRef();
+  const [input, setInput] = useState('')
   const location = useLocation();
+
+  const getData = (event) => {
+    event.preventDefault()
+    console.log(input)
+  }
   const toggle = () => {
     if (isOpen) {
       setColor("transparent");
@@ -102,7 +108,7 @@ function Header(props) {
         props.location.pathname.indexOf("full-screen-maps") !== -1
           ? "navbar-absolute fixed-top"
           : "navbar-absolute fixed-top " +
-            (color === "transparent" ? "navbar-transparent " : "")
+          (color === "transparent" ? "navbar-transparent " : "")
       }
     >
       <Container fluid>
@@ -127,9 +133,9 @@ function Header(props) {
           <span className="navbar-toggler-bar navbar-kebab" />
         </NavbarToggler>
         <Collapse isOpen={isOpen} navbar className="justify-content-end">
-          <form>
+          <form onSubmit={getData}>
             <InputGroup className="no-border">
-              <Input placeholder="Search..." />
+              <Input placeholder="Search..." onChange={(event) => setInput(event.target.value)} />
               <InputGroupAddon addonType="append">
                 <InputGroupText>
                   <i className="nc-icon nc-zoom-split" />
