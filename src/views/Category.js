@@ -18,6 +18,7 @@
 */
 import React, { useEffect, useState } from "react";
 import CategoryDetail from "views/CategoryDetail";
+import ItemDetail from "./ItemDetail";
 import axios from 'axios'
 // reactstrap components
 import {
@@ -41,7 +42,6 @@ import {
 
 function Category() {
   const [movieCategories, setMovieCategories] = useState([])
-  const { id } = useParams()
   const getCategories = async () => {
     const { data } = await axios.get(`https://movie-search-backend.herokuapp.com/content/categories`)
     setMovieCategories(data)
@@ -49,24 +49,20 @@ function Category() {
   const renderMovieCategories = movieCategories.map(category => {
     return (
       <Col md="3">
-          <Button
-            block
-            color="primary"
-            onClick={(event)=>{
-              const url = `/admin/category/${category.id}?page=1`
-              window.location.href= url
-            }}
-          >
-            {category.name}
-          </Button>
+        <Button
+          block
+          color="primary"
+          onClick={(event) => {
+            const url = `/admin/category/${category.id}?page=1`
+            window.location.href = url
+          }}
+        >
+          {category.name}
+        </Button>
       </Col>
     )
   })
 
-  const renderSomething = (props) => {
-    console.log(id)
-    return <p>{id}</p>
-  }
   useEffect(() => {
     getCategories()
     // showData()
@@ -77,8 +73,14 @@ function Category() {
       <div className='content'>
         <Row>
           <Switch>
+            <Route path='/admin/category/item/:id'>
+              <ItemDetail />
+            </Route>
+            <Route path='/admin/category/search'>
+              <CategoryDetail domain='search/' />
+            </Route>
             <Route path='/admin/category/:id'>
-              <CategoryDetail/>
+              <CategoryDetail domain='category/' />
             </Route>
             <Route path='/admin/category' exact>
               <Col md="12">
@@ -86,11 +88,19 @@ function Category() {
                   <CardBody>
                     <div className="places-buttons">
                       <Row>
-                        <Col className="ml-auto mr-auto" lg="8">
+                        <Col className="ml-auto mr-auto" >
+                          <Button
+                            block
+                            color="warning"
+                            onClick={(event) => {
+                              const url = `/admin/category/search?page=1`
+                              window.location.href = url
+                            }}
+                          >
+                            All movies
+                          </Button>
                           <Row>
-                            <Router>
-                              {renderMovieCategories}
-                            </Router>
+                            {renderMovieCategories}
                           </Row>
                         </Col>
                       </Row>

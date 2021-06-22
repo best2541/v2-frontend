@@ -1,0 +1,26 @@
+.loading {
+    display: block;
+    text-align: center;
+    align-items: center;
+    margin: 0;
+     position: absolute;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    color: red;
+  }
+  .btn-center{
+    justify-content: center;
+    text-align: center;
+  }
+  .btn-right{
+    justify-content: right;
+    text-align: right;
+  }
+  .img{
+    overflow: hidden;
+    height: 200px;
+    width: 100%;
+    position: relative;
+  }

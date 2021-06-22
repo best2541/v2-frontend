@@ -19,6 +19,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useHistory, useLocation, useParams, Link } from "react-router-dom";
+import CircularProgress from '@material-ui/core/CircularProgress';
 import qs from 'query-string'
 import {
   Card,
@@ -29,14 +30,16 @@ import {
   Row,
   Col,
 } from "reactstrap";
+import '../assets/css/mystyle.css'
+import ItemDetail from "./ItemDetail";
 
 function CategoryDetail(props) {
 
-  const { id } = useParams()
+  let { id } = useParams()
   const location = useLocation()
   const history = useHistory()
   const queryParams = qs.parse(location.search);
-  // const [loading, setLoading] = useState(<CircularProgress />)
+  const [loading, setLoading] = useState(<CircularProgress />)
   const [next, setNext] = useState(queryParams.page || 1)
   const [prev, setPrev] = useState(queryParams.page || 1)
   const [page, setPage] = useState(queryParams.page || 1)
@@ -56,28 +59,10 @@ function CategoryDetail(props) {
     setQueryString({ page: prev })
   }
 
-  function renderEditButton() {
-    if (token) {
-      return (
-        <form>
-          <button className="btn" variant="success">Edit</button>
-        </form>
-      )
-    }
-  }
-
-  function renderDeleteButton() {
-    if (token) {
-      return (
-        <form>
-          <button className="btn" variant="danger" type='submit'>Delete</button>
-        </form>
-      )
-    }
-  }
-
   const getData = async () => {
-    const { data } = await axios.get(`https://movie-search-backend.herokuapp.com/content/category/${id}?page=${page}`)
+    console.log(props.domain)
+    if (!id) id = ''
+    const { data } = await axios.get(`https://movie-search-backend.herokuapp.com/content/${props.domain}${id}?page=${page}`)
     setMovies(data.result)
     if (data.next) {
       setNext(data.next.page)
@@ -88,7 +73,7 @@ function CategoryDetail(props) {
   }
 
   const a = setTimeout(() => {
-    // setLoading(<h3>Not Found</h3>)
+    setLoading(<h3>Not Found</h3>)
   }, [5000])
 
   useEffect(() => {
@@ -98,7 +83,7 @@ function CategoryDetail(props) {
   const renderMovies = movies.map((movie, movieIndex) => {
 
     function detailUrl() {
-      return `/content/detail/${movie.pointer}`
+      return `/admin/category/item/${movie.pointer}`
     }
     function deleteUrl(event) {
       event.preventDefault()
@@ -111,36 +96,61 @@ function CategoryDetail(props) {
       }
     }
     return (
-      <section className="card-item" key={movieIndex}>
-        <Link to={detailUrl}><img className='img_table' src={movie.imgUrl}></img></Link>
-        <Link to={detailUrl}> <a className='item' href=''><h5>{movie.engName}</h5></a></Link>
-        <Link to={detailUrl}><span className='item'>{renderEditButton()}</span></Link>
-        <span className='item' onClick={deleteUrl}>{renderDeleteButton()}</span>
-      </section>
+      <>
+        <Col md="4">
+          <Card>
+            <CardHeader>
+              <Link to={detailUrl}>
+                <div className="img">
+                  <img
+                    alt="..."
+                    src={movie.imgUrl || require("assets/img/damir-bosnjak.jpg").default}
+                  />
+                </div>
+              </Link>
+            </CardHeader>
+            <CardFooter>
+              <Link to={detailUrl}> <a className='item' href=''><h5>{movie.engName}</h5></a></Link>
+            </CardFooter>
+          </Card>
+        </Col>
+      </>
     )
   })
 
-
-  return (
-    <>
-      <div className="content">
-        <Col md='12'>
+  if (movies.length > 0) {
+    return (
+      <>
+        <div className="content">
           <Row>
-            <Card>
-              <CardHeader>
-                <CardTitle tag='h5'>
-                  {id}
-                </CardTitle>
-                <Link to={detailUrl}><img className='img_table' src={movie.imgUrl}></img></Link>
-
-              </CardHeader>
-            </Card>
+            <Col md='4'>
+              <button variant='primary' className="prevbtn" onClick={prevClick}>PREVIOUS</button>
+            </Col>
+            <Col md='4' className='btn-center'>
+              <h5>Page:{page}</h5>
+            </Col>
+            <Col md='4' className='btn-right'>
+              <button variant='primary' className="nextbtn" onClick={nextClick}>NEXT</button>
+            </Col>
           </Row>
-        </Col>
 
-      </div>
-    </>
-  );
+          <Row>
+            {renderMovies}
+          </Row>
+        </div>
+      </>
+    );
+  } else {
+    return (
+      <>
+        <div className='content'>
+          <div className="loading">
+            {loading}
+          </div>
+        </div>
+      </>
+    )
+  }
 }
 
 export default CategoryDetail;

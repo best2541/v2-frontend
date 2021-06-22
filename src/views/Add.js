@@ -16,7 +16,7 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from 'axios'
 
 // reactstrap components
@@ -36,7 +36,6 @@ import {
 } from "reactstrap";
 
 function Add() {
-  const [movie, setMovie] = useState({})
   const [category, setCategory] = useState([])
   const [movieCategories, setMovieCategories] = useState([])
   const [selectedMovieCategories, setSelectedMoiveCategories] = useState([])
@@ -50,10 +49,6 @@ function Add() {
   const [myanmarCheck, setMyanmarCheck] = useState(false)
   const [cambodiaCheck, setCambodiaCheck] = useState(false)
   const [vietnamCheck, setVietnamCheck] = useState(false)
-
-  let dateStart = new Date(movie.copyrightStart).toDateString()
-  let dateEnd = new Date(movie.copyrightEnd).toDateString()
-  let dubDate = new Date(movie.dubfinish).toDateString()
 
   function inputChange(event) {
     const { name, value } = event.target;
@@ -108,6 +103,14 @@ function Add() {
     });
   }
 
+  const getCategories = async () => {
+    const { data } = await axios.get(`https://movie-search-backend.herokuapp.com/content/categories`)
+    setMovieCategories(data)
+  }
+
+  useEffect(() => {
+    getCategories()
+  }, [])
   async function clickSubmit(event) {
     event.preventDefault()
     await axios.post('https://movie-search-backend.herokuapp.com/content/add', {
@@ -120,7 +123,6 @@ function Add() {
       .then((res) => {
         alert(res.data.message)
       })
-    // return window.location.href = `/`
   }
 
   let thisYear = (new Date()).getFullYear();
@@ -221,14 +223,15 @@ function Add() {
                       <Col className='md-2'>
                         <label>ตั้งแต่</label>
                         <Input type='date' name="copyrightStart" onChange={(event) => {
-                          event.value = new Date(event).toDateString()
+                          event.value = new Date(event).toLocaleDateString()
+                          console.log(event)
                           inputChange(event)
                         }} />
                       </Col>
                       <Col className='md-2'>
                         <label>ถึง</label>
                         <Input type='date' name="copyrightEnd" onChange={(event) => {
-                          event.value = new Date(event).toDateString()
+                          event.value = new Date(event).toLocaleDateString()
                           inputChange(event)
                         }} />
                       </Col>
@@ -334,77 +337,61 @@ function Add() {
                   </Row>
                   <Row>
                     <Col className='mb-12'>
-                      <label>ประเภท</label>
-                      <br />
+                      <Row>
+                        <Col md='7'>
+                          <Label>ประเภท</Label>
+                          <br />
+                          <input type="checkbox" id="2" name="category" value='2' onChange={categoryChange} />
+                          <label className='px-1' for="Action">Action</label>
+                          <input type="checkbox" id="1" name="category" value='1' onChange={categoryChange} />
+                          <label className='px-1' for="Adventure">Adventure</label>
+                          <input type="checkbox" id="10" name="category" value='10' onChange={categoryChange} />
+                          <label className='px-1' for="Animation">Animation</label>
+                          <input type="checkbox" id="11" name="category" value='11' onChange={categoryChange} />
+                          <label className='px-1' for="Comedy">Comedy</label>
+                          <input type="checkbox" id="8" name="category" value='8' onChange={categoryChange} />
+                          <label className='px-1' for="Crime">Crime</label>
+                          <input type="checkbox" id="9" name="category" value='9' onChange={categoryChange} />
+                          <label className='px-1' for="Documentaries">Documentaries</label>
+                          <input type="checkbox" id="4" name="category" value='4' onChange={categoryChange} />
+                          <label className='px-1' for="Drama">Drama</label>
+                          <br/>
+                          <input type="checkbox" id="12" name="category" value='12' onChange={categoryChange} />
+                          <label className='px-1' for="Erotic">Erotic</label>
+                          <input type="checkbox" id="6" name="category" value='6' onChange={categoryChange} />
+                          <label className='px-1' for="Family">Family</label>
+                          <input type="checkbox" id="13" name="category" value='13' onChange={categoryChange} />
+                          <label className='px-1' for="Fantasy">Fantasy</label>
+                          <input type="checkbox" id="14" name="category" value='14' onChange={categoryChange} />
+                          <label className='px-1' for="Musicals Movies">Musicals</label>
+                          <input type="checkbox" id="15" name="category" value='15' onChange={categoryChange} />
+                          <label className='px-1' for="Romance">Romance</label>
+                          <input type="checkbox" id="5" name="category" value='5' onChange={categoryChange} />
+                          <label className='px-1' for="Sci-fi">Sci-fi</label>
+                          <input type="checkbox" id="7" name="category" value='7' onChange={categoryChange} />
+                          <label className='px-1' for="Thriller">Thriller</label>
+                          <input type="checkbox" id="3" name="categoy" value='3' onChange={categoryChange} />
+                          <label className='px-1' for="War">War</label>
+                          <input type="checkbox" id="16" name="category" value='16' onChange={categoryChange} />
+                          <label className='px-1' for="Western">Western</label>
+                        </Col>
+                        <Col md='2'>
+                          <label>หมวด</label>
+                          <FormGroup check>
+                            <Label check>
+                              <Input type="radio" name="serie" value='ซีรี่ย์' onChange={(event) => inputChange(event)} />
+                              ซีรี่ย์
+                            </Label>
+                          </FormGroup>
+                          <FormGroup check>
+                            <Label check>
+                              <Input type="radio" name="serie" value='ม้วนเดียว' onChange={(event) => inputChange(event)} />
+                              ม้วนเดียว
+                            </Label>
+                          </FormGroup>
 
-                      <input type="checkbox" className='' id="Adventure" name="category" value='1' />
-                      <label className='px-1' for="Adventure">Adventure</label>
-
-                      <input type="checkbox" className='px-1' id="Action" name="category" value='2' />
-                      <label className='px-1' for="Action">Action</label>
-
-                      <input type="checkbox" className='px-1' id="War" name="categoy" value='3' />
-                      <label className='px-1' for="War">War</label>
-
-                      <input type="checkbox" className='px-1' id="Drama" name="category" value='4' />
-                      <label className='px-1' for="Drama">Drama</label>
-
-                      <input type="checkbox" className='px-1' id="Sci-fi" name="category" value='5' />
-                      <label className='px-1' for="Sci-fi">Sci-fi</label>
-
-                      <input type="checkbox" className='px-1' id="Family" name="category" value='6' />
-                      <label className='px-1' for="Family">Family</label>
-
-                      <input type="checkbox" className='px-1' id="Thriller" name="category" value='7' />
-                      <label className='px-1' for="Thriller">Thriller</label>
-
-                      <input type="checkbox" className='px-1' id="Crime" name="category" value='8' />
-                      <label className='px-1' for="Crime">Crime</label>
-
-                      <input type="checkbox" className='px-1' id="Documentaries" name="category" value='9' />
-                      <label className='px-1' for="Documentaries">Documentaries</label>
-
-                      <input type="checkbox" className='px-1' id="Animation" name="category" value='10' />
-                      <label className='px-1' for="Animation">Animation</label>
-
-                      <input type="checkbox" className='px-1' id="Animation" name="category" value='10' />
-                      <label className='px-1' for="Animation">Animation</label>
-
-                      <input type="checkbox" className='px-1' id="Comedy" name="category" value='11' />
-                      <label className='px-1' for="Comedy">Comedy</label>
-
-                      <input type="checkbox" className='px-1' id="Erotic" name="category" value='12' />
-                      <label className='px-1' for="Erotic">Erotic</label>
-
-                      <input type="checkbox" className='px-1' id="Fantasy" name="category" value='13' />
-                      <label className='px-1' for="Fantasy">Fantasy</label>
-                      <br />
-                      <input type="checkbox" className='px-1' id="Musicals Movies" name="category" value='14' />
-                      <label className='px-1' for="Musicals Movies">Musicals Movies</label>
-
-                      <input type="checkbox" className='px-1' id="Romance" name="category" value='15' />
-                      <label className='px-1' for="Romance">Romance</label>
-
-                      <input type="checkbox" className='px-1' id="Western" name="category" value='16' />
-                      <label className='px-1' for="Western">Western</label>
-
-                    </Col>
-                  </Row>
-                  <Row>
-                    <Col className='md-12'>
-                      <Label>หมวด</Label>
-                      <FormGroup check>
-                        <Label check>
-                          <Input type="radio" name="serie" value='ซีรีย์' onChange={(event) => inputChange(event)} />
-                          ซีรีย์
-                        </Label>
-                      </FormGroup>
-                      <FormGroup check>
-                        <Label check>
-                          <Input type="radio" name="serie" value='ม้วนเดียว' onChange={(event) => inputChange(event)} />
-                          ม้วนเดียว
-                        </Label>
-                      </FormGroup>
+                        </Col>
+                      </Row>
                     </Col>
                   </Row>
                   <Row>
@@ -463,34 +450,34 @@ function Add() {
                   <Row>
                     <Col md='2' className='pr-2'>
                       <label>สถานะการพากย์</label>
-                      <Input 
-                      type='text'
-                      name='dubstatus'
-                      onChange={(event)=> inputChange(event)}
+                      <Input
+                        type='text'
+                        name='dubstatus'
+                        onChange={(event) => inputChange(event)}
                       />
                     </Col>
                     <Col md='4' className='px-2'>
                       <label>ทีมพากย์</label>
-                      <Input 
-                      type='text'
-                      name='dubteam'
-                      onChange={(event)=> inputChange(event)}
+                      <Input
+                        type='text'
+                        name='dubteam'
+                        onChange={(event) => inputChange(event)}
                       />
                     </Col>
                     <Col md='4' className='px-2'>
                       <label>ชื่อนักพากย์</label>
-                      <Input 
-                      type='text'
-                      name='dubname'
-                      onChange={(event)=> inputChange(event)}
+                      <Input
+                        type='text'
+                        name='dubname'
+                        onChange={(event) => inputChange(event)}
                       />
                     </Col>
                     <Col md='2' className='pl-2'>
                       <label>ลงบิลวันที่</label>
-                      <Input 
-                      type='date'
-                      name='dubDate'
-                      onChange={(event)=> inputChange(event)}
+                      <Input
+                        type='date'
+                        name='dubDate'
+                        onChange={(event) => inputChange(event)}
                       />
                     </Col>
                   </Row>
