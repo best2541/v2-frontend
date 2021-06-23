@@ -16,33 +16,13 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
-import Dashboard from "views/Dashboard.js";
-import Notifications from "views/Notifications.js";
-import Icons from "views/Icons.js";
-import Typography from "views/Typography.js";
 import Category from "views/Category";
 import Login from "views/Login";
-import UserPage from "views/User.js";
 import UpgradeToPro from "views/Upgrade.js";
 import Add from "views/Add.js"
-import CategoryDetail from "views/CategoryDetail";
 
 
 var routes = [
-  // {
-  //   path: "/dashboard",
-  //   name: "Dashboard",
-  //   icon: "nc-icon nc-bank",
-  //   component: Dashboard,
-  //   layout: "/admin",
-  // },
-  // {
-  //   path: "/icons",
-  //   name: "Icons",
-  //   icon: "nc-icon nc-diamond",
-  //   component: Icons,
-  //   layout: "/admin",
-  // },
   { 
     path: "/login",
     name: "Login",
@@ -50,13 +30,6 @@ var routes = [
     component: Login,
     layout: "/admin",
   },
-  // {
-  //   path: "/notifications",
-  //   name: "Notifications",
-  //   icon: "nc-icon nc-bell-55",
-  //   component: Notifications,
-  //   layout: "/admin",
-  // },
   {
     path: "/category",
     name: "Category",
@@ -64,13 +37,6 @@ var routes = [
     component: Category,
     layout: "/admin",
   },
-  // {
-  //   path: "/typography",
-  //   name: "Typography",
-  //   icon: "nc-icon nc-caps-small",
-  //   component: Typography,
-  //   layout: "/admin",
-  // },
   {
     path: "/add",
     name: "Add",
@@ -78,7 +44,6 @@ var routes = [
     component: Add,
     layout: "/admin",
   },
-  
   {
     pro: true,
     path: "/upgrade",

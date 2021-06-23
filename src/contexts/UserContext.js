@@ -23,6 +23,7 @@ export const UserProvider = (props) => {
     useEffect(() => {
         if (token) {
             localStorage.setItem('userAccessToken', token)
+            console.log('context',token)
         }
     }, [token])
 

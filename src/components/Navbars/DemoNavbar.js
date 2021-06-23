@@ -16,6 +16,7 @@
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 */
+import axios from "axios";
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
@@ -48,8 +49,9 @@ function Header(props) {
 
   const getData = (event) => {
     event.preventDefault()
-    console.log(input)
+    window.location.href = `/admin/category/searchby/${input}?page=1`
   }
+
   const toggle = () => {
     if (isOpen) {
       setColor("transparent");

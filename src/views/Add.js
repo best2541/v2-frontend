@@ -62,12 +62,25 @@ function Add() {
 
   function categoryChange(event) {
     const { value } = event.target
+    console.log(value)
     setCategory((prevCategory) => {
       return [
         ...prevCategory,
         value
       ]
     })
+  }
+  function categoryChange(event) {
+    const { id, checked } = event.target
+    const numberId = Number(id)
+    const updatedArray = new Set([...selectedMovieCategories])
+    if (checked === true) {
+      updatedArray.add(numberId)
+    } else {
+      updatedArray.delete(numberId)
+    }
+    console.log(updatedArray)
+    setSelectedMoiveCategories([...updatedArray])
   }
 
   function imgChange(event) {
@@ -116,7 +129,11 @@ function Add() {
     await axios.post('https://movie-search-backend.herokuapp.com/content/add', {
       id: input.id, imgName: input.imgName, img: input.img, engName: input.engName,
       thName: input.thName, etcName: input.etcName, movieYear: input.movieYear, ep: input.ep,
-      disc: input.disc, category: category, serie: input.serie, mainCharater: input.mainCharater, company: input.company, pokerCompany: input.pokerCompany, pokerName: input.pokerName, pokerTell: input.pokerTell, pokerEmail: input.pokerEmail, copyrightStart: input.copyrightStart, copyrightEnd: input.copyrightEnd, dubstatus: input.dubstatus, dubteam: input.dubteam, dubname: input.dubname, dubfinish: input.dubfinish, recorder: input.recorder, recordStatus: input.recordStatus, story: input.story, length: input.length, thCheck, laosCheck, myanmarCheck, cambodiaCheck, vietnamCheck
+      disc: input.disc, category: selectedMovieCategories, serie: input.serie, mainCharater: input.mainCharater,
+      company: input.company, pokerCompany: input.pokerCompany, pokerName: input.pokerName, pokerTell: input.pokerTell, pokerEmail: input.pokerEmail,
+      copyrightStart: input.copyrightStart, copyrightEnd: input.copyrightEnd,
+      dubstatus: input.dubstatus, dubteam: input.dubteam, dubname: input.dubname, dubfinish: input.dubfinish,
+      recorder: input.recorder, recordStatus: input.recordStatus, story: input.story, length: input.length, thCheck, laosCheck, myanmarCheck, cambodiaCheck, vietnamCheck
     }, {
       timeout: 20000
     })
@@ -355,7 +372,7 @@ function Add() {
                           <label className='px-1' for="Documentaries">Documentaries</label>
                           <input type="checkbox" id="4" name="category" value='4' onChange={categoryChange} />
                           <label className='px-1' for="Drama">Drama</label>
-                          <br/>
+                          <br />
                           <input type="checkbox" id="12" name="category" value='12' onChange={categoryChange} />
                           <label className='px-1' for="Erotic">Erotic</label>
                           <input type="checkbox" id="6" name="category" value='6' onChange={categoryChange} />
@@ -389,7 +406,6 @@ function Add() {
                               ม้วนเดียว
                             </Label>
                           </FormGroup>
-
                         </Col>
                       </Row>
                     </Col>

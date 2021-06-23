@@ -26,13 +26,16 @@ import "assets/demo/demo.css";
 import "perfect-scrollbar/css/perfect-scrollbar.css";
 
 import AdminLayout from "layouts/Admin.js";
+import { UserProvider } from './contexts/UserContext';
 
 ReactDOM.render(
   <BrowserRouter>
-    <Switch>
-      <Route path="/admin" render={(props) => <AdminLayout {...props} />} />
-      <Redirect to="/admin/login" />
-    </Switch>
+    <UserProvider>
+      <Switch>
+        <Route path="/admin" render={(props) => <AdminLayout {...props} />} />
+        <Redirect to="/admin/login" />
+      </Switch>
+    </UserProvider>
   </BrowserRouter>,
   document.getElementById("root")
 );

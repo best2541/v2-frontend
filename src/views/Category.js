@@ -76,6 +76,9 @@ function Category() {
             <Route path='/admin/category/item/:id'>
               <ItemDetail />
             </Route>
+            <Route path='/admin/category/searchby/:id'>
+              <CategoryDetail domain='' />
+            </Route>
             <Route path='/admin/category/search'>
               <CategoryDetail domain='search/' />
             </Route>

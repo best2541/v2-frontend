@@ -36,7 +36,7 @@ import {
   Label
 } from "reactstrap";
 import { useParams } from "react-router";
-import { data } from "jquery";
+// import { data } from "jquery";
 
 function ItemDetail() {
   const { id } = useParams()
@@ -113,6 +113,9 @@ function ItemDetail() {
       cambodiaCheck: contentDetail[0].cambodiaCheck,
       vietnamCheck: contentDetail[0].vietnamCheck,
     })
+    setMovie(contentDetail[0])
+    console.log('movie:', movie)
+
   }
   useEffect(() => {
     getData()
@@ -149,6 +152,10 @@ function ItemDetail() {
         console.log(err);
       });
   }
+
+  const a = setTimeout(() => {
+    setLoading(<h3>Not Found</h3>)
+  }, [5000])
 
   //dropdown
   let thisYear = (new Date()).getFullYear();
@@ -188,7 +195,7 @@ function ItemDetail() {
       return window.location.href = `/`
     }
   }
-  if (movie.length > 1) {
+  if (Object.keys(movie).length > 0) {
     const renderCategory = movie.categories.map(category => {
       return category.name
     })
@@ -422,8 +429,8 @@ function ItemDetail() {
                       <Col className='mb-12'>
                         <Row>
                           <Col md='7'>
-                          <Label>ประเภท</Label>
-                          <br/>
+                            <Label>ประเภท</Label>
+                            <br />
                             {renderMovieCategories}
                           </Col>
                           <Col md='2'>

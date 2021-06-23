@@ -1,27 +1,21 @@
 /*!
-
 =========================================================
 * Paper Dashboard React - v1.3.0
 =========================================================
-
 * Product Page: https://www.creative-tim.com/product/paper-dashboard-react
 * Copyright 2021 Creative Tim (https://www.creative-tim.com)
-
 * Licensed under MIT (https://github.com/creativetimofficial/paper-dashboard-react/blob/main/LICENSE.md)
-
 * Coded by Creative Tim
-
 =========================================================
-
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
 */
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useHistory, useLocation, useParams, Link } from "react-router-dom";
 import CircularProgress from '@material-ui/core/CircularProgress';
 import qs from 'query-string'
 import {
+  Button,
   Card,
   CardHeader,
   CardBody,
@@ -31,11 +25,12 @@ import {
   Col,
 } from "reactstrap";
 import '../assets/css/mystyle.css'
-import ItemDetail from "./ItemDetail";
+import UserContext from '../contexts/UserContext'
 
 function CategoryDetail(props) {
-
   let { id } = useParams()
+  const { token, setToken } = useContext(UserContext)
+  const userAccessToken = window.localStorage.getItem('userAccessToken')
   const location = useLocation()
   const history = useHistory()
   const queryParams = qs.parse(location.search);
@@ -60,8 +55,8 @@ function CategoryDetail(props) {
   }
 
   const getData = async () => {
-    console.log(props.domain)
     if (!id) id = ''
+    console.log(`https://movie-search-backend.herokuapp.com/content/${props.domain}${id}?page=${page}`)
     const { data } = await axios.get(`https://movie-search-backend.herokuapp.com/content/${props.domain}${id}?page=${page}`)
     setMovies(data.result)
     if (data.next) {
@@ -78,7 +73,19 @@ function CategoryDetail(props) {
 
   useEffect(() => {
     getData()
+
   }, [page])
+
+  function renderDeleteButton() {
+
+    if (userAccessToken = window.localStorage.getItem('userAccessToken')) {
+      return (
+        <form>
+          <Button variant="danger" type='submit'>Delete</Button>
+        </form>
+      )
+    }
+  }
 
   const renderMovies = movies.map((movie, movieIndex) => {
 
@@ -111,6 +118,7 @@ function CategoryDetail(props) {
             </CardHeader>
             <CardFooter>
               <Link to={detailUrl}> <a className='item' href=''><h5>{movie.engName}</h5></a></Link>
+              <span className='item' onClick={deleteUrl}>{renderDeleteButton()}</span>
             </CardFooter>
           </Card>
         </Col>

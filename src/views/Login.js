@@ -17,7 +17,8 @@
 
 */
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import UserContext from '../contexts/UserContext'
 // reactstrap components
 import { Card, CardHeader, CardBody, Row, Col, Button, CardTitle, Form, FormGroup, Label, Input, UncontrolledAlert } from "reactstrap";
 
@@ -25,7 +26,7 @@ import { Card, CardHeader, CardBody, Row, Col, Button, CardTitle, Form, FormGrou
 function Map() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [token, setToken] = useState(null)
+  const { token, setToken } = useContext(UserContext)
   const [loginFailStatatus, setLoginFailStatus] = useState(null)
 
   async function auth(event) {
@@ -35,12 +36,19 @@ function Map() {
       password
     }).then((response) => {
       setToken(response.data.accessToken)
+      window.localStorage.setItem('userAccessToken')
       setLoginFailStatus(null)
     }).catch(error => {
       setLoginFailStatus(error.response.data.massage)
       return false
     })
   }
+
+  useEffect(() => {
+    if (token) {
+      return window.location.href = '/admin/category'
+    }
+  }, [token])
 
   const isLoginFail = () => {
     if (loginFailStatatus) {
