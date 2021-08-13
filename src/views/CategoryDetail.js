@@ -28,6 +28,7 @@ import '../assets/css/mystyle.css'
 import UserContext from '../contexts/UserContext'
 
 function CategoryDetail(props) {
+  require('dotenv').config()
   let { id } = useParams()
   const { token, setToken } = useContext(UserContext)
   const userAccessToken = window.localStorage.getItem('userAccessToken')
@@ -56,8 +57,8 @@ function CategoryDetail(props) {
 
   const getData = async () => {
     if (!id) id = ''
-    console.log(`https://movie-search-backend.herokuapp.com/content/${props.domain}${id}?page=${page}`)
-    const { data } = await axios.get(`https://movie-search-backend.herokuapp.com/content/${props.domain}${id}?page=${page}`)
+    console.log(`API:${process.env.REACT_APP_API}`)
+    const { data } = await axios.get(`${process.env.REACT_APP_API}/content/${props.domain}${id}?page=${page}`)
     setMovies(data.result)
     if (data.next) {
       setNext(data.next.page)
@@ -73,15 +74,14 @@ function CategoryDetail(props) {
 
   useEffect(() => {
     getData()
-
   }, [page])
 
   function renderDeleteButton() {
 
-    if (userAccessToken = window.localStorage.getItem('userAccessToken')) {
+    if (userAccessToken) {
       return (
         <form>
-          <Button variant="danger" type='submit'>Delete</Button>
+          <Button color="danger" type='submit'>Delete</Button>
         </form>
       )
     }
@@ -96,12 +96,13 @@ function CategoryDetail(props) {
       event.preventDefault()
       const sure = window.confirm('ต้องการลบ ?')
       if (sure === true) {
-        axios.delete(`https://movie-search-backend.herokuapp.com/content/delete/${movie.pointer}`).then((response) => {
+        axios.delete(`${process.env.REACT_APP_API}/content/delete/${movie.pointer}`).then((response) => {
           alert('ลบเรียบร้อย!!')
-          return window.location.href = `/content/category/${id}?page=${page}`
+          return window.location.reload()
         })
       }
     }
+    if(!movie.img) movie.imgUrl = null
     return (
       <>
         <Col md="4">
@@ -110,6 +111,7 @@ function CategoryDetail(props) {
               <Link to={detailUrl}>
                 <div className="img">
                   <img
+		    className='picture'
                     alt="..."
                     src={movie.imgUrl || require("assets/img/damir-bosnjak.jpg").default}
                   />
@@ -117,7 +119,8 @@ function CategoryDetail(props) {
               </Link>
             </CardHeader>
             <CardFooter>
-              <Link to={detailUrl}> <a className='item' href=''><h5>{movie.engName}</h5></a></Link>
+              <Link to={detailUrl}> <a className='item' href=''><h5 className='bold'>{movie.engName}</h5></a></Link>
+		<label className=''>{movie.id}</label>
               <span className='item' onClick={deleteUrl}>{renderDeleteButton()}</span>
             </CardFooter>
           </Card>
@@ -141,7 +144,6 @@ function CategoryDetail(props) {
               <button variant='primary' className="nextbtn" onClick={nextClick}>NEXT</button>
             </Col>
           </Row>
-
           <Row>
             {renderMovies}
           </Row>

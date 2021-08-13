@@ -41,9 +41,10 @@ import {
 } from "react-router-dom";
 
 function Category() {
+  require('dotenv').config()
   const [movieCategories, setMovieCategories] = useState([])
   const getCategories = async () => {
-    const { data } = await axios.get(`https://movie-search-backend.herokuapp.com/content/categories`)
+    const { data } = await axios.get(`${process.env.REACT_APP_API}/content/categories`)
     setMovieCategories(data)
   }
   const renderMovieCategories = movieCategories.map(category => {

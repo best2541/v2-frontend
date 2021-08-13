@@ -18,37 +18,21 @@
 */
 import React, { useEffect, useState } from "react";
 import axios from 'axios'
-
 // reactstrap components
-import {
-  Button,
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
-  CardTitle,
-  FormGroup,
-  Form,
-  Input,
-  Row,
-  Col,
-  Label
-} from "reactstrap";
+import { Button, Card, CardHeader, CardBody, CardFooter, CardTitle, FormGroup, Form, Input, Row, Col, Label } from "reactstrap";
+import TagsInput from '../components/TagsInput';
 
 function Add() {
-  const [category, setCategory] = useState([])
+  require('dotenv').config()
   const [movieCategories, setMovieCategories] = useState([])
+  const [movieCountry, setMovieCountry] = useState([])
+  const [selectedMovieCountry, setSelectedMovieCountry] = useState([])
   const [selectedMovieCategories, setSelectedMoiveCategories] = useState([])
   const [input, setInput] = useState({
     id: '', img: '', imgFile: null, engName: '', thName: '', etcName: '', movieYear: 0, ep: '', disc: 0, category: [], serie: '', mainCharater: '', company: '', length: 0,
     pokerCompany: '', pokerName: '', pokerTell: 0, pokerEmail: '', copyrightStart: '', copyrightEnd: '', dubstatus: '', dubteam: '', dubname: '',
     dubfinish: '', story: '', recorder: '', recordStatus: ''
   })
-  const [thCheck, setThCheck] = useState(false)
-  const [laosCheck, setLaosCheck] = useState(false)
-  const [myanmarCheck, setMyanmarCheck] = useState(false)
-  const [cambodiaCheck, setCambodiaCheck] = useState(false)
-  const [vietnamCheck, setVietnamCheck] = useState(false)
 
   function inputChange(event) {
     const { name, value } = event.target;
@@ -61,16 +45,6 @@ function Add() {
   }
 
   function categoryChange(event) {
-    const { value } = event.target
-    console.log(value)
-    setCategory((prevCategory) => {
-      return [
-        ...prevCategory,
-        value
-      ]
-    })
-  }
-  function categoryChange(event) {
     const { id, checked } = event.target
     const numberId = Number(id)
     const updatedArray = new Set([...selectedMovieCategories])
@@ -81,6 +55,19 @@ function Add() {
     }
     console.log(updatedArray)
     setSelectedMoiveCategories([...updatedArray])
+  }
+
+  function countryChange(event) {
+    const { id, checked } = event.target
+    const numberId = Number(id)
+    const updatedArray = new Set([...selectedMovieCountry])
+    if (checked === true) {
+      updatedArray.add(numberId)
+    } else {
+      updatedArray.delete(numberId)
+    }
+    console.log(updatedArray)
+    setSelectedMovieCountry([...updatedArray])
   }
 
   function imgChange(event) {
@@ -116,24 +103,53 @@ function Add() {
     });
   }
 
-  const getCategories = async () => {
-    const { data } = await axios.get(`https://movie-search-backend.herokuapp.com/content/categories`)
-    setMovieCategories(data)
+  // tags------------------------------------------------------------
+
+  const [tags, setTags] = useState([]);
+  const [errors, setErrors] = useState({});
+
+  const changeHandler = (name, value) => {
+    if (name === 'tags') {
+      setTags(value);
+      if (value.length > 0 && errors.tags) {
+        setErrors(prev => {
+          const prevErrors = { ...prev };
+          delete prevErrors.tags;
+          return prevErrors;
+        });
+      }
+    }
   }
 
-  useEffect(() => {
-    getCategories()
-  }, [])
+  const submitHandler = e => {
+    e.preventDefault();
+
+    if (tags.length === 0) {
+      setErrors(prev => ({
+        ...prev,
+        tags: 'Please add at least one tag'
+      }));
+    }
+
+    if (tags.length > 0) {
+      console.log(tags);
+      // Submit form
+    }
+  }
+  // end tags-------------------------------------------------------------------------------
+
+
   async function clickSubmit(event) {
     event.preventDefault()
-    await axios.post('https://movie-search-backend.herokuapp.com/content/add', {
+    console.log('tags',tags)
+    await axios.post(`${process.env.REACT_APP_API}/content/add`, {
       id: input.id, imgName: input.imgName, img: input.img, engName: input.engName,
       thName: input.thName, etcName: input.etcName, movieYear: input.movieYear, ep: input.ep,
-      disc: input.disc, category: selectedMovieCategories, serie: input.serie, mainCharater: input.mainCharater,
+      disc: input.disc, category: selectedMovieCategories, serie: input.serie, mainCharater: tags,
       company: input.company, pokerCompany: input.pokerCompany, pokerName: input.pokerName, pokerTell: input.pokerTell, pokerEmail: input.pokerEmail,
       copyrightStart: input.copyrightStart, copyrightEnd: input.copyrightEnd,
       dubstatus: input.dubstatus, dubteam: input.dubteam, dubname: input.dubname, dubfinish: input.dubfinish,
-      recorder: input.recorder, recordStatus: input.recordStatus, story: input.story, length: input.length, thCheck, laosCheck, myanmarCheck, cambodiaCheck, vietnamCheck
+      recorder: input.recorder, recordStatus: input.recordStatus, story: input.story, length: input.length, country: selectedMovieCountry, location: input.location
     }, {
       timeout: 20000
     })
@@ -224,15 +240,15 @@ function Add() {
                   <CardBody>
                     <Row className='content'>
                       <Col>
-                        <input type="checkbox" id="thCheck" name="country" onChange={(e) => setThCheck(e.target.checked)} />
+                        <input type="checkbox" id="1" name="country" onChange={countryChange} />
                         <label className='pr-1 pl-1' for="thCheck">  ไทย</label>
-                        <input type="checkbox" id="laosCheck" name="country" onChange={(e) => setLaosCheck(e.target.checked)} />
+                        <input type="checkbox" id="2" name="country" onChange={countryChange} />
                         <label className='pr-1 pl-1' for="laosCheck">  ลาว</label>
-                        <input type="checkbox" id="myanmarCheck" name="country" onChange={(e) => setMyanmarCheck(e.target.checked)} />
+                        <input type="checkbox" id="3" name="country" onChange={countryChange} />
                         <label className='pr-1 pl-1' for="myanmarCheck">  พม่า</label>
-                        <input type="checkbox" id="cambodiaCheck" name="country" onChange={(e) => setCambodiaCheck(e.target.checked)} />
+                        <input type="checkbox" id="4" name="country" onChange={countryChange} />
                         <label className='pr-1 pl-1' for="cambodiaCheck">  กัมพูชา</label>
-                        <input type="checkbox" id="vietnamCheck" name="country" onChange={(e) => setVietnamCheck(e.target.checked)} />
+                        <input type="checkbox" id="5" name="country" onChange={countryChange} />
                         <label className='pr-1 pl-1' for="vietnamCheck">  เวียดนาม</label>
                       </Col>
                     </Row>
@@ -262,7 +278,7 @@ function Add() {
                   color="primary"
                   type="submit"
                 >
-                  Update Profile
+                  New Profile
                 </Button>
               </div>
             </Col>
@@ -353,6 +369,21 @@ function Add() {
                     </Col>
                   </Row>
                   <Row>
+                    <Col className="pr-1" md="12">
+                      <FormGroup>
+                        <label>
+                          ที่จัดเก็บ
+                        </label>
+                        <Input
+                          name='location'
+                          placeholder="Location"
+                          type="text"
+                          onChange={(event) => inputChange(event)}
+                        />
+                      </FormGroup>
+                    </Col>
+                  </Row>
+                  <Row>
                     <Col className='mb-12'>
                       <Row>
                         <Col md='7'>
@@ -380,7 +411,7 @@ function Add() {
                           <input type="checkbox" id="13" name="category" value='13' onChange={categoryChange} />
                           <label className='px-1' for="Fantasy">Fantasy</label>
                           <input type="checkbox" id="14" name="category" value='14' onChange={categoryChange} />
-                          <label className='px-1' for="Musicals Movies">Musicals</label>
+                          <label className='px-1' for="Mystery">Mystery</label>
                           <input type="checkbox" id="15" name="category" value='15' onChange={categoryChange} />
                           <label className='px-1' for="Romance">Romance</label>
                           <input type="checkbox" id="5" name="category" value='5' onChange={categoryChange} />
@@ -390,7 +421,7 @@ function Add() {
                           <input type="checkbox" id="3" name="categoy" value='3' onChange={categoryChange} />
                           <label className='px-1' for="War">War</label>
                           <input type="checkbox" id="16" name="category" value='16' onChange={categoryChange} />
-                          <label className='px-1' for="Western">Western</label>
+                          <label className='px-1' for="Horror">Horror</label>
                         </Col>
                         <Col md='2'>
                           <label>หมวด</label>
@@ -413,12 +444,21 @@ function Add() {
                   <Row>
                     <Col className="pr-1" md="4">
                       <FormGroup>
-                        <label>ตัวละครหลัก</label>
+                        {/* <label>ตัวละครหลัก</label>
                         <Input
                           name='mainCharater'
                           placeholder="Main character"
                           type="text"
                           onChange={(event) => inputChange(event)}
+                        /> */}
+                        <TagsInput
+                          label="ตัวละครหลัก"
+                          id="tags"
+                          name="tags"
+                          placeholder="Add tag"
+                          onChange={changeHandler}
+                          error={errors.tags}
+                          defaultTags={tags}
                         />
                       </FormGroup>
                     </Col>

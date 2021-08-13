@@ -24,6 +24,7 @@ import { Card, CardHeader, CardBody, Row, Col, Button, CardTitle, Form, FormGrou
 
 
 function Map() {
+  require('dotenv').config()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const { token, setToken } = useContext(UserContext)
@@ -31,7 +32,7 @@ function Map() {
 
   async function auth(event) {
     event.preventDefault()
-    await axios.post('https://movie-search-backend.herokuapp.com/login/auth', {
+    await axios.post(`${process.env.REACT_APP_API}/login/auth`, {
       username,
       password
     }).then((response) => {

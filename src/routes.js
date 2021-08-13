@@ -18,18 +18,14 @@
 */
 import Category from "views/Category";
 import Login from "views/Login";
-import UpgradeToPro from "views/Upgrade.js";
 import Add from "views/Add.js"
+import AddActor from "views/AddActor"
+import ActorList from "views/ActorList"
+import Logout from "views/Logout";
 
+const userAccessToken = window.localStorage.getItem('userAccessToken')
 
 var routes = [
-  { 
-    path: "/login",
-    name: "Login",
-    icon: "nc-icon nc-single-02",
-    component: Login,
-    layout: "/admin",
-  },
   {
     path: "/category",
     name: "Category",
@@ -38,19 +34,45 @@ var routes = [
     layout: "/admin",
   },
   {
-    path: "/add",
-    name: "Add",
-    icon: "nc-icon nc-simple-add",
-    component: Add,
+    path: "/actor",
+    name: "Actor",
+    icon: "nc-icon nc-circle-10",
+    component: ActorList,
     layout: "/admin",
-  },
-  {
+  }
+]
+if (userAccessToken) {
+  routes.push({
     pro: true,
-    path: "/upgrade",
+    path: "/Logout",
     name: "Log out",
     icon: "nc-icon nc-button-power",
-    component: UpgradeToPro,
+    component: Logout,
     layout: "/admin",
   },
-];
+    {
+      path: "/add",
+      name: "Add",
+      icon: "nc-icon nc-simple-add",
+      component: Add,
+      layout: "/admin",
+    },
+    {
+      path: "/insertActor",
+      name: "Add Actor",
+      icon: "nc-icon nc-simple-add",
+      component: AddActor,
+      layout: "/admin",
+    }
+  )
+} else {
+  routes.push({
+    pro: true,
+    path: "/login",
+    name: "Login",
+    icon: "nc-icon nc-button-power",
+    component: Login,
+    layout: "/admin",
+  })
+}
 export default routes;

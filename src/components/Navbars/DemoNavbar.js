@@ -17,7 +17,7 @@
 
 */
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   Collapse,
@@ -40,18 +40,58 @@ import {
 import routes from "routes.js";
 
 function Header(props) {
+  require('dotenv').config()
   const [isOpen, setIsOpen] = React.useState(false);
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
   const [color, setColor] = React.useState("transparent");
   const sidebarToggle = React.useRef();
   const [input, setInput] = useState('')
   const location = useLocation();
+  const [display, setDisplay] = useState(false)
+  const [movies, setMovies] = useState([])
+  const wrapperRef = useRef(null);
 
+  //Search
   const getData = (event) => {
     event.preventDefault()
     window.location.href = `/admin/category/searchby/${input}?page=1`
   }
 
+  async function showData() {
+    const { data } = await axios.get(`${process.env.REACT_APP_API}/content/${input}?page=1&limit=10`)
+    setMovies(data.result)
+    console.log(data)
+  }
+
+  const renderSearch = movies.map((movie, movieIndex) => {
+    return (
+      <div>
+        <a href={`/admin/category/item/${movie.pointer}`}>
+          <span>
+            <img className='searchImg' src={movie.imgUrl} alt=''></img>
+            <span className="text-search">{movie.id + '  ' + movie.engName}</span>
+          </span>
+        </a>
+      </div>
+    )
+  })
+  useEffect(() => {
+    showData()
+  }, [input])
+
+  useEffect(() => {
+    window.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      window.removeEventListener("mousedown", handleClickOutside);
+    };
+  });
+  const handleClickOutside = event => {
+    const { current: wrap } = wrapperRef;
+    if (wrap && !wrap.contains(event.target)) {
+      setDisplay(false);
+    }
+  };
+  //end of search
   const toggle = () => {
     if (isOpen) {
       setColor("transparent");
@@ -135,24 +175,23 @@ function Header(props) {
           <span className="navbar-toggler-bar navbar-kebab" />
         </NavbarToggler>
         <Collapse isOpen={isOpen} navbar className="justify-content-end">
-          <form onSubmit={getData}>
-            <InputGroup className="no-border">
-              <Input placeholder="Search..." onChange={(event) => setInput(event.target.value)} />
+          <form onSubmit={getData} ref={wrapperRef}>
+            <InputGroup className="no-border width100">
+              <Input placeholder="Search..." onChange={(event) => setInput(event.target.value)} onClick={() => setDisplay(true)} />
               <InputGroupAddon addonType="append">
                 <InputGroupText>
                   <i className="nc-icon nc-zoom-split" />
                 </InputGroupText>
               </InputGroupAddon>
             </InputGroup>
+            {display && input != '' &&
+              <div>
+                <ul className="autoCompleteCard">
+                  {renderSearch}
+                </ul>
+              </div>
+            }
           </form>
-          <Nav navbar>
-            <Dropdown
-              nav
-              isOpen={dropdownOpen}
-              toggle={(e) => dropdownToggle(e)}
-            >
-            </Dropdown>
-          </Nav>
         </Collapse>
       </Container>
     </Navbar>

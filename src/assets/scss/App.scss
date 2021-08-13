@@ -1,0 +1,88 @@
+$primary-color: #1df9ba;
+$primary-bg-color: #f1f1f1;
+$primary-text-color: #222;
+$primary-text-color2: #888;
+$primary-border-color: #e1e1e1;
+$error-color: #ff5964;
+
+
+form {
+
+  .tags-input {
+    margin-bottom: 15px;
+
+    &.active {
+
+      .tags-input__wrapper {
+        border-color: $primary-text-color2;
+      }
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      margin-top: 3px;
+      margin-bottom: 4px;
+    }
+
+    &__wrapper {
+      border: 1px solid $primary-border-color;
+      padding-top: 10px;
+      padding-left: 3px;
+      padding-bottom: 2px;
+      border-radius: 4px;
+      transition: border-color .3s ease;
+    }
+
+    &__tags {
+      display: flex;
+      flex-wrap: wrap;
+
+      .tag {
+        background-color: $primary-bg-color;
+        border-radius: 4px;
+        font-size: 12px;
+        margin-right: 5px;
+        margin-bottom: 5px;
+        transition: background-color .3s ease;
+
+        i {
+          margin-left: 5px;
+          cursor: pointer;
+        }
+
+        &:hover {
+          background-color: darken($primary-bg-color, 10);
+        }
+      }
+
+      input {
+        border: 0;
+        outline: 0;
+        margin-bottom: 5px;
+        padding: 0;
+        flex: 1;
+        min-width: 80px;
+      }
+    }
+  }
+
+  button {
+    background-color: $primary-color;
+    color: $primary-text-color;
+    border: 0;
+    outline: 0;
+    cursor: pointer;
+    transition: background-color .3s ease;
+
+    &:hover {
+      background-color: darken($primary-color, 10);
+    }
+  }
+
+  .error {
+    padding: 5px 0;
+    color: $error-color;
+    font-size: 12px;
+  }
+}
